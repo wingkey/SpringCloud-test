@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+</head>
+<body>
+	<h5>这是403页面</h5>
+	<h2 th:text="${test}"></h2>
+	<input type="test" th:value="${test}" />
+	
+	<img th:src="@{img/123.jpg}" />
+	
+	<table>
+		<tr>
+			<th>测试</th>
+		</tr>
+		<tr th:each="a : ${list}">
+			<td th:text ="${a}"></td>
+		</tr>
+	</table>
+	
+</body>
+</html>
