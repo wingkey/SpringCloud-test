@@ -20,4 +20,5 @@ public class UserinfoServiceImpl implements UserinfoService {
 		return userinfoMapper.getUserinfoById(id);
 	}
 
+	
 }

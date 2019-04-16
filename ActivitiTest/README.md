@@ -185,12 +185,37 @@
 	3）在开发中，可以将每一个任务的办理人规定好，例如张三的领导是李四，李四的领导是王五，这样张三提交任务，就可以查询出张三的领导是李四，通过类的方式设置下一个任务的办理人
 	       
 ## 组任务
- 组任务：即一个任务分配给一个组的人去做，这里图省事还是用并行节点一次测试所有方法
-三种方式：1 .直接指定  直接在流程图节点里给Candidate  users给赋值  格式  xx,xx,xx,xx   对应流程图节点group1
-         2 使用流程变量       直接在流程图节点里给Candidate  users给变量            对应流程图节点group2
-   3.使用监听器赋值任务人  直接使用监听器赋值       对应流程图节点group3
-  
-  注意：组任务和个人任务是不一样的（个人任务就是直接给assignee赋值）二者按任务人去查节点的方式是不同的
+ 组任务及三种分配方式：
+    1：在taskProcess.bpmn中直接写 candidate-users=“小A,小B,小C,小D"
+    2：在taskProcess.bpmn中写 candidate-users =“#{userIDs}”，变量的值要是String的。
+         使用流程变量指定办理人
+              Map<String, Object> variables = new HashMap<String, Object>();
+              variables.put("userIDs", "大大,小小,中中");
+    3，使用TaskListener接口，使用类实现该接口，在类中定义：
+            //添加组任务的用户
+delegateTask.addCandidateUser(userId1);
+delegateTask.addCandidateUser(userId2);
+组任务分配给个人任务（认领任务）：
+     processEngine.getTaskService().claim(taskId, userId);
+个人任务分配给组任务：
+     processEngine.getTaskService(). setAssignee(taskId, null);
+向组任务添加人员：
+     processEngine.getTaskService().addCandidateUser(taskId, userId);
+向组任务删除人员：
+     processEngine.getTaskService().deleteCandidateUser(taskId, userId);
+个人任务和组任务存放办理人对应的表：
+act_ru_identitylink表存放任务的办理人，包括个人任务和组任务，表示正在执行的任务
+act_hi_identitylink表存放任务的办理人，包括个人任务和组任务，表示历史任务
+区别在于：如果是个人任务TYPE的类型表示participant（参与者）
+		 如果是组任务TYPE的类型表示candidate（候选者）和participant（参与者）
 
+##角色组
+ 角色组：
+ 即写流程的时候给上角色组，当然前提是要已经建组了，没建组的话那么就建个组，再对组成员分配，
+ 
+ 注意：这里奇坑，按角色组分配和按任务人及按组分配三种分配节点任务人的方式查询方式全都不一样，所以这里奇坑
+ 当要查某个人目前的任务时，也就是说要按三种方式轮流查一遍
+ 
+详细查询方式见类   TestGroup, TestCharacter  ,TestUser
 
 
