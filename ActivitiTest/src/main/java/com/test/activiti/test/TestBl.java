@@ -16,7 +16,28 @@ import org.junit.Test;
 import com.test.activiti.vo.TestVo;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ 流程图变量 
+ 分两种
+  二者区别
+		 setVariable  全局性的 ，即在这个流程内，只要设置过，在哪个节点都能获取到这个值
+		 setVariableLocal   局部的 ，只在当前节点生效，到下个节点就查询不到了
+		 
+		 当然，二者的值都可以放实体类 ，只是要求实体类要序列化（内部有处理）
+		 
+		 other:
+		 
+		 1）RuntimeService对象可以设置流程变量和获取流程变量
+		 2）TaskService对象可以设置流程变量和获取流程变量
+		 3）流程实例启动的时候可以设置流程变量
+		 4）任务办理完成的时候可以设置流程变量
+		 5）流程变量可以通过名称/值的形式设置单个流程变量
+		 6）流程变量可以通过Map集合，同时设置多个流程变量
+		 Map集合的key表示流程变量的名称
+		 Map集合的value表示流程变量的值
+ 
+ 
+ */
 
 @Slf4j
 public class TestBl {
