@@ -34,6 +34,7 @@
 		<module>spring-boot-dubbo-interface-1</module>
 		<module>spring-boot-dubbo-provider-1</module>
 		<module>Algorithm</module>
+		<module>ActivitiTest</module>
 	</modules>
 	
 	<dependencies>

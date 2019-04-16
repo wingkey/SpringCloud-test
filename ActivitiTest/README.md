@@ -1,0 +1,119 @@
+# Activiti 工作流说明
+
+# 准备工作
+*   配置pem文件，这里主要是activiti的包配置，dao层使用框架和数据库连接看自己的自行修改配置
+*   建表：1.在resouerces下配置好自己数据库的连接信息，详见activiti.cfg.xml中的配置，根据自己的数据库自行修改。2.建表,见类createtable ，里面唯一要注意的就是前面配置的配置文件地址是否正确，执行里面的方法即可创建好所需要的表
+
+
+#  默认网页工作台
+*  先从官网下再activiti的包，从git或maven上下载的都不是要的，解压后里面有个war文件夹，里面的就是我们用的工作台，部署上tomcat后需要修改数据库连接，将自己使用的数据库连接包放到lib目录下，再去修改配置文件db.properties（这里面指定数据库是哪个的时候，sqlserver数据库写mssql不然不识别），这后面再重启tomcat连接的就是自己的数据库了，自己数据库要建的25张表见解压后的database文件夹，里面看自己对应的数据库选择自己用的建表语句
+
+
+## 可能出现的情况  
+* tomcat 启动报错   Version of activiti database (5.22.0.0) is more recent than the engine (5.13)  这个直接修改数据库表ACT_GE_PROPERTY 5.22.0.0为 5.13即可解决
+* 默认登录用户   kermit   密码 kermit
+
+
+#  表结构介绍
+因为详细介绍表内容太多了，详见链接  https://blog.csdn.net/hj7jay/article/details/51302829
+表大概分为这几类
+*  ACT_GE_* : “GE”代表“General”（通用），用在各种情况下；
+
+*  ACT_HI_* : “HI”代表“History”（历史），这些表中保存的都是历史数据，比如执行过的流程实例、变量、任务，等等。Activit默认提供了4种历史级别：
+              none: 不保存任何历史记录，可以提高系统性能；
+			  activity：保存所有的流程实例、任务、活动信息；
+			  audit：也是Activiti的默认级别，保存所有的流程实例、任务、活动、表单属性；
+			  full：最完整的历史记录，除了包含audit级别的信息之外还能保存详细，例如：流程变量。
+			   对于几种级别根据对功能的要求选择，如果需要日后跟踪详细可以开启full。
+
+*  ACT_ID_* : “ID”代表“Identity”（身份），这些表中保存的都是身份信息，如用户和组以及两者之间的关系。如果Activiti被集成在某一系统当中的话，这些表可以不用，可以直接使用现有系统中的用户或组信息；
+
+*  ACT_RE_* : “RE”代表“Repository”（仓库），这些表中保存一些‘静态’信息，如流程定义和流程资源（如图片、规则等）；
+
+*  ACT_RU_* : “RU”代表“Runtime”（运行时），这些表中保存一些流程实例、用户任务、变量等的运行时数据。Activiti只保存流程实例在执行过程中的运行时数据，并且当流程结束后会立即移除这些数据，这是为了保证运行时表尽量的小并运行的足够快；
+
+##简单介绍几种常用表
+######流程部署相关
+*  act_re_deployement 部署对象表
+*  act_ge_bytearray 资源文件表
+*  act_ge_prperty  主键生成策略表（对于部署对象表的主键ID）
+
+######流程实例相关表
+*  act_ru_execution 正在执行的执行对象表（包含执行对象ID和流程实例ID，如果有多个线程可能流程实例ID不一样）
+*  act_hi_procinst 流程实例历史表
+*  act_hi_actinst 存放历史所有完成的任务
+
+######Task 任务相关表
+*  act_ru_task 代办任务表 （只对应节点是UserTask的）
+*  act_hi_taskinst 代办任务历史表 （只对应节点是UserTask的）
+*  act_hi_actinst  所有节点活动历史表 （对应流程的所有节点的活动历史，从开始节点一直到结束节点中间的所有节点的活动都会被记录）
+
+######流程变量表
+*  act_ru_variable 正在执行的流程变量表
+*  act_hi_variable 流程变量历史表
+
+
+#画流程图
+#####eclipse插件下载地址：https://www.activiti.org/designer/archived/activiti-designer-5.18.0.zip
+安装完毕后即可使用，直接new时搜activiti就能找到插件，不要使用第二个project 
+*  要有start 和end
+* 中间流程使用task面板，具体用里面哪个看需要
+*  流程之间的连线使用connection中的第一个连
+
+
+
+
+##中文api http://www.mossle.com/docs/activiti/index.html
+
+
+
+
+## 常见类说明
+*  ProcessEngine 流程引擎，核心类，所有其他相关类全是从他来的
+	>  产生方式 	ProcessEngine engine=ProcessEngines.getDefaultProcessEngine()
+	>可以产生RepositoryService :processengine.getRepositoryService()
+	>可以产生RuntimeService: processengine.getRuntimeService()
+	>可以产生TaskService:processengine.getTaskService()
+* service说明 ：RepositoryService   管理流程定义
+			  RuntimeService  执行管理，包括启动、推进、删除流程实例等操作
+			TaskService：任务管理
+			HistoryService:历史管理(执行完的数据的管理)
+			IdentityService:组织机构管理
+			FormService:一个可选服务，任务表单管理
+			
+
+### RepositoryService
+* 即仓库服务类，其实就是定义两个文件，就是加载自己画的流程图文件（bpmn和对应png）
+* 产生方式 ：processengine.getRepositoryService()
+* 可以产生DeploymentBuilder，用来定义流程部署的相关参数
+* 删除流程定义
+
+### RuntimeService
+* 流程执行服务类。可以从这个服务类中获取很多关于流程执行相关的信息。
+
+
+### TaskService
+* 任务服务类。可以从这个类中获取任务的信息
+
+###  HistoryService
+* 查询历史信息的类。在一个流程执行完成后，这个对象为我们提供查询历史信息。
+
+###  ProcessDefinition
+* 流程定义类。可以从这里获得资源文件等
+
+### ProcessInstance
+* 流程定义的执行实例，流程实例就表示一个流程从开始到结束的最大的流程分支，即一个流程中流程实例只有一个。
+
+### Execution
+* 描述流程执行的每一个节点。在没有并发的情况下，Execution就是同ProcessInstance。流程按照流程定义的规则执行一次的过程
+
+
+
+### activiti 自带用户表
+* 因为自带用户表，而且牵涉到分配任务关系人时牵涉到这些表，所以在不修改源码的条件下，项目要使用只能用外键进行关联来处理了
+* ACT_ID_USER  用户表 主键id ，这里id即用户名自己注意用户名重复问题
+* ACT_ID_GROUP 用户组   在创建流程表的时候可以按流程组分配，即该流程通知所有组人
+* ACT_ID_MEMBERSHIP 用户-组关联表  即用户属于哪些组
+
+###### 因为流程图分人的时候好像只能单人分，多人的话只好分组，那么这里就可以这样先建组再分
+
