@@ -64,7 +64,7 @@ public class TestActiviti {
 	 * 
 	 */
 	public void deleteTask1() {
-		String id = "172503";// ACT_RE_PROCDEF中EPLOYMENT_ID_
+		String id = "172503";
 		ProcessEngine engine = ProcessEngines.getDefaultProcessEngine();
 		String deid=engine.getTaskService().createTaskQuery().taskId(id).singleResult().getProcessDefinitionId();//流程定义id
 		 

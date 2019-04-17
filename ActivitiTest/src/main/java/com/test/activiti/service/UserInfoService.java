@@ -25,4 +25,17 @@ public interface UserInfoService {
 	public List<UserInfoVo> selectByGroupid(String groupid);
 	
 	
+	/**
+	 * 根据id更新哦用户数据
+	 * @param vo
+	 * @return
+	 */
+	public int updateUser(UserInfoVo vo);
+	
+	/**
+	 * 将传入对象转成map后再查，对象属性为null则不作为条件
+	 * @param vo
+	 * @return
+	 */
+	public List<UserInfoVo> select(UserInfoVo vo);
 }

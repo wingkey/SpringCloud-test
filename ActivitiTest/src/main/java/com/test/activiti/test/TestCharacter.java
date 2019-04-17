@@ -57,12 +57,28 @@ private IdentityService identityService=engine.getIdentityService();
 		log.info("to test start success ,the id is " + instance.getId() + " the process is "
 				+ instance.getProcessDefinitionId());
 	}
+	
+	@Test
+	public void start() {
+		//启动
+				ProcessInstance instance =engine.getRuntimeService().startProcessInstanceByKey("test7");
+				log.info("to test start success ,the id is " + instance.getId() + " the process is "
+						+ instance.getProcessDefinitionId());
+		
+	}
+	
 
 	@Test
 	//以组形式查询任务
 	public void find() {
+		List<Task>res3=engine.getTaskService().createTaskQuery()
+				.taskCandidateOrAssigned("neko").list();
+		log.debug(res3.toString());
 		
-		List<Task> list4=engine.getTaskService().createTaskQuery().list();
+		/*List<Task>res2=engine.getTaskService().createTaskQuery()
+				.taskCandidateGroup("leader").list();
+		log.debug(res2.toString());*/
+		/*List<Task> list4=engine.getTaskService().createTaskQuery().list();
 		log.debug(list4.toString());
 		for (Task taska : list4) {
 			log.debug(taska.toString());
@@ -79,7 +95,7 @@ private IdentityService identityService=engine.getIdentityService();
 				}
 				
 			}
-		}
+		}*/
 	}
 	
 	/**
@@ -107,7 +123,7 @@ private IdentityService identityService=engine.getIdentityService();
 	@Test
 	//完成
 	public void  complete() {
-		String taskid="205011";
+		String taskid="215004";
 		
 		engine.getTaskService().complete(taskid);
 		log.debug("finish");

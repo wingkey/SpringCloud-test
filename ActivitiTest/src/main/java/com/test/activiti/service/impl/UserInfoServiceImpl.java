@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.test.activiti.dao.UserInfoDao;
 import com.test.activiti.service.UserInfoService;
+import com.test.activiti.utils.Vo2MapUtils;
 import com.test.activiti.vo.UserInfoVo;
 
 public class UserInfoServiceImpl implements  UserInfoService{
@@ -41,6 +42,16 @@ public class UserInfoServiceImpl implements  UserInfoService{
 		wrapper.where(" id in(select userid from  age_user_group where groupid ={0} )", groupid);
 		wrapper.orderBy("id");
 		return userInfoDao.selectList(wrapper);
+	}
+
+	@Override
+	public int updateUser(UserInfoVo vo) {
+		return userInfoDao.updateById(vo);
+	}
+
+	@Override
+	public List<UserInfoVo> select(UserInfoVo vo) {
+		return userInfoDao.selectByMap(Vo2MapUtils.vo2Map(vo, true));
 	}
 
 }

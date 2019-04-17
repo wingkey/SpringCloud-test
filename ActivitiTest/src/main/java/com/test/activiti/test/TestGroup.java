@@ -44,6 +44,7 @@ act_hi_identitylink表存放任务的办理人，包括个人任务和组任务�
 public class TestGroup {
 private ProcessEngine engine = ProcessEngines.getDefaultProcessEngine();
 
+
 	
 
 	@Test
@@ -70,6 +71,10 @@ private ProcessEngine engine = ProcessEngines.getDefaultProcessEngine();
 	@Test
 	//以组形式查询任务
 	public void find() {
+		
+		
+		
+		
 		
 		List<Task> list4=engine.getTaskService().createTaskQuery().list();
 		log.debug(list4.toString());

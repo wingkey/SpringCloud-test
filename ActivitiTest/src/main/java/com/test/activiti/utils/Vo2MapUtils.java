@@ -7,7 +7,6 @@ import java.util.Map;
 public class Vo2MapUtils {
 	
 	/**
-	 * 
 	 * @param vo
 	 * @param check  是否放入null值  true不放 ，false放
 	 * @return
